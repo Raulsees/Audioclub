@@ -12,11 +12,10 @@ public class DiscoMapper implements RowMapper<Disco> {
 
     @Override
     public Disco map(ResultSet rs, StatementContext ctx) throws SQLException {
-        return new Disco(rs.getInt("id"),
-                rs.getString("name"),
-                rs.getString("description"),
-                rs.getDate("datetime"),
-                rs.getFloat("price"),
+        return new Disco(rs.getInt("id_disco"),
+                rs.getString("nombre"),
+                rs.getInt("ano"),
+                rs.getString("genero"),
                 rs.getString("picture"));
     }
 }

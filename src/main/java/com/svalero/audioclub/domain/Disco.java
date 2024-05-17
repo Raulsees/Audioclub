@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @Data
 
 public class Disco {
-    private int id;
+    private int id_disco;
     private String nombre;
-    private int año;
+    private int ano;
     private String genero;
     private String picture;
 }
