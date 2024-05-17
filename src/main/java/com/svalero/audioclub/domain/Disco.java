@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,9 +12,8 @@ import java.sql.Date;
 
 public class Disco {
     private int id;
-    private String name;
-    private String description;
-    private Date datetime;
-    private float price;
+    private String nombre;
+    private int año;
+    private String genero;
     private String picture;
 }
