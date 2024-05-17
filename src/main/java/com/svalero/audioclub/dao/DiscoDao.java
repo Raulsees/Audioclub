@@ -6,7 +6,7 @@ import org.jdbi.v3.sqlobject.statement.UseRowMapper;
 
 import java.util.List;
 
-public class DiscoDao {
+public interface DiscoDao {
 
 
     @SqlQuery("SELECT * FROM discos")
