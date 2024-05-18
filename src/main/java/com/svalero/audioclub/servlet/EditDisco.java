@@ -14,7 +14,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
 
-@WebServlet("edit-disco")
+@WebServlet("/edit-disco")
 public class EditDisco extends HttpServlet {
 
     @Override
