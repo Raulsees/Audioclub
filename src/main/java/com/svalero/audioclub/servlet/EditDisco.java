@@ -4,15 +4,18 @@ import com.svalero.audioclub.dao.Database;
 import com.svalero.audioclub.dao.DiscoDao;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.http.HttpClient;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.UUID;
 
 @WebServlet("/edit-disco")
 public class EditDisco extends HttpServlet {
@@ -22,19 +25,49 @@ public class EditDisco extends HttpServlet {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
 
+        HttpSession currentSession = request.getSession();
+        if (currentSession.getAttribute("role") != null) {
+            if (!currentSession.getAttribute("role").equals("admin")) {
+                response.sendRedirect("/audioclub");
+            }
+        }
+
         try {
             if (hasValidationErrors(request, response))
                 return;
 
+            int id = 0;
+            if (request.getParameter("id_cliente") != null) {
+                id = Integer.parseInt(request.getParameter("id_cliente"));
+            }
+
             String nombre = request.getParameter("nombre");
             int ano = Integer.parseInt(request.getParameter("ano"));
             String genero = request.getParameter("genero");
-            String picture = request.getParameter("picture");
+            Part picturePart = request.getPart("picture");
+
+            String imagePath = request.getServletContext().getInitParameter("image-path");
+            String filename = null;
+            if (picturePart.getSize() == 0) {
+                filename = "no-image.jpg";
+            } else {
+                filename = UUID.randomUUID() + ".jpg";
+                InputStream fileStream = picturePart.getInputStream();
+                Files.copy(fileStream, Path.of(imagePath + File.separator + filename));
+            }
 
             Database.connect();
-            int affectedRows = Database.jdbi.withExtension(DiscoDao.class,
-                    dao -> dao.addDisco(nombre, ano, genero, picture));
-            sendMessage("Disco registrada correctamente", response);
+            final String finalFilename = filename;
+            if (id == 0) {
+                int affectedRows = Database.jdbi.withExtension(DiscoDao.class,
+                        dao -> dao.addDisco(nombre, ano, genero, finalFilename));
+                sendMessage("Disco registrado correctamente", response);
+            } else {
+                final int finalId = id;
+                int affectedRows = Database.jdbi.withExtension(DiscoDao.class,
+                        dao -> dao.updateDisco(nombre, ano, genero, finalFilename, finalId));
+                sendMessage("Disco registrado correctamente", response);
+            }
         } catch (ClassNotFoundException cnfe) {
             cnfe.printStackTrace();
             sendError("Internal Server Error", response);

@@ -15,9 +15,20 @@ public interface DiscoDao {
     @UseRowMapper(DiscoMapper.class)
     List<Disco> getAllDiscos();
 
+    @SqlQuery("SELECT * FROM discos WHERE id_disco = ?")
+    @UseRowMapper(DiscoMapper.class)
+    Disco getDisco(int id_disco);
+
     @SqlUpdate("INSERT INTO discos (nombre, ano, genero, picture) VALUES (?, ?, ?, ?)")
     int addDisco(String nombre, int ano, String genero, String picture);
 
+    @SqlUpdate("UPDATE discos SET nombre = ?, ano = ?, genero = ?, picture = ?) WHERE id = ?")
+    int updateDisco(String nombre, int ano, String genero, String picture, int id_disco);
+
+
     @SqlUpdate("DELETE FROM discos WHERE id_disco = ?")
     int removeDisco(int id_disco);
+
+
+
 }
